@@ -49,6 +49,7 @@ import static java.util.Locale.GERMAN;
 @Widgetset("com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet")
 public class ChequebookUI extends UI {
     BeanItemContainer<Person> personContainer = new BeanItemContainer<>(Person.class, Bank.instance.getPersons());
+    BeanItemContainer<Person> personWithoutMeContainer = new BeanItemContainer<>(Person.class, Bank.instance.getPersons());
     BeanItemContainer<Place> placeContainer = new BeanItemContainer<>(Place.class, Places.instance.places);
     PersonTable personTable = new PersonTable();
     NewTransactionForm form = new NewTransactionForm();
@@ -91,6 +92,7 @@ public class ChequebookUI extends UI {
                 }});
             } else {
                 me = Bank.instance.findPerson(ctx);
+                personWithoutMeContainer.removeItem(me);
                 getPage().setTitle("CheckBook - " + me.getName());
                 tabBarView = new TabBarView() {{
                     addTab(personTable, "All", FontAwesome.LIST_OL);
@@ -159,7 +161,7 @@ public class ChequebookUI extends UI {
             setItemCaptionPropertyId("shortTitle");
             addValueChangeListener(selectPlace);
         }};
-        NativeSelect peer = new NativeSelect("User", personContainer) {{
+        NativeSelect peer = new NativeSelect("User", personWithoutMeContainer) {{
             setNullSelectionAllowed(false);
             setItemCaptionPropertyId("name");
         }};
