@@ -8,16 +8,32 @@ import com.vaadin.addon.touchkit.ui.VerticalComponentGroup;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.server.*;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 import javax.servlet.annotation.WebServlet;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static com.vaadin.server.FontAwesome.ARROW_CIRCLE_O_LEFT;
 import static com.vaadin.server.FontAwesome.ARROW_CIRCLE_RIGHT;
@@ -33,6 +49,7 @@ import static java.util.Locale.GERMAN;
 @Widgetset("com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet")
 public class ChequebookUI extends UI {
     BeanItemContainer<Person> personContainer = new BeanItemContainer<>(Person.class, Bank.instance.getPersons());
+    BeanItemContainer<Place> placeContainer = new BeanItemContainer<>(Place.class, Places.instance.places);
     PersonTable personTable = new PersonTable();
     NewTransactionForm form = new NewTransactionForm();
     TransactionTable transactionTable = new TransactionTable();
@@ -126,6 +143,22 @@ public class ChequebookUI extends UI {
     }
 
     private class NewTransactionForm extends VerticalComponentGroup {
+        Property.ValueChangeListener selectPlace = new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Property property = event.getProperty();
+                Place place = (Place) property.getValue();
+                List<Integer> defaultPrices = place.getDefaultPrices();
+                if (!defaultPrices.isEmpty()) {
+                    amount.setValue(defaultPrices.get(0).toString());
+                }
+            }
+        };
+        NativeSelect place = new NativeSelect("Place", placeContainer) {{
+            setNullSelectionAllowed(false);
+            setItemCaptionPropertyId("shortTitle");
+            addValueChangeListener(selectPlace);
+        }};
         NativeSelect peer = new NativeSelect("User", personContainer) {{
             setNullSelectionAllowed(false);
             setItemCaptionPropertyId("name");
@@ -144,7 +177,7 @@ public class ChequebookUI extends UI {
 
         {
             send.setWidth("100%");
-            addComponents(peer, amount, comment, send);
+            addComponents(place, amount, peer, comment, send);
         }
 
         public void setValue(Person person) {

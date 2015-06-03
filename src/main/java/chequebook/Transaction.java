@@ -14,12 +14,22 @@ public class Transaction implements Serializable {
     private final Person peer;
     private final BigDecimal amount;
     private final String comment;
+    private final Place place;
 
     public Transaction(Instant created, Person peer, BigDecimal amount, String comment) {
         this.created = created;
         this.peer = peer;
         this.amount = amount;
         this.comment = comment;
+        this.place = null;
+    }
+
+    public Transaction(Instant created, Person peer, BigDecimal amount, String comment, Place place) {
+        this.created = created;
+        this.peer = peer;
+        this.amount = amount;
+        this.comment = comment;
+        this.place = place;
     }
 
     public Instant getCreated() {
@@ -40,5 +50,9 @@ public class Transaction implements Serializable {
 
     public String getComment() {
         return comment;
+    }
+
+    public Place getPlace() {
+        return place;
     }
 }
