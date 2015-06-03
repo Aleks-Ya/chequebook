@@ -16,14 +16,6 @@ public class Transaction implements Serializable {
     private final String comment;
     private final Place place;
 
-    public Transaction(Instant created, Person peer, BigDecimal amount, String comment) {
-        this.created = created;
-        this.peer = peer;
-        this.amount = amount;
-        this.comment = comment;
-        this.place = null;
-    }
-
     public Transaction(Instant created, Person peer, BigDecimal amount, String comment, Place place) {
         this.created = created;
         this.peer = peer;
@@ -54,5 +46,9 @@ public class Transaction implements Serializable {
 
     public Place getPlace() {
         return place;
+    }
+
+    public String getPlaceName() {
+        return place != null ? place.getShortTitle() : "-";
     }
 }

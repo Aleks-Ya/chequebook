@@ -42,9 +42,10 @@ public class Bank implements Serializable {
         return new ArrayList<>(persons.values());
     }
 
-    public synchronized void addTransaction(Instant time, Person p1, Person p2, BigDecimal amount, String comment) {
-        p1.getTransactions().add(new Transaction(time, p2, amount, comment));
-        p2.getTransactions().add(new Transaction(time, p1, amount.negate(), comment));
+    public synchronized void addTransaction(
+            Instant time, Person p1, Person p2, BigDecimal amount, String comment, Place place) {
+        p1.getTransactions().add(new Transaction(time, p2, amount, comment, place));
+        p2.getTransactions().add(new Transaction(time, p1, amount.negate(), comment, place));
         save();
     }
 

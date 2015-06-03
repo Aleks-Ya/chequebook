@@ -168,8 +168,9 @@ public class ChequebookUI extends UI {
         Button send = new Button("Send", event -> {
             BigDecimal m = parse(amount.getValue());
             Person p = (Person) peer.getValue();
+            Place pl = (Place) place.getValue();
             if (p != null && m.compareTo(ZERO) > 0) {
-                Bank.instance.addTransaction(Instant.now(), me, p, m, comment.getValue());
+                Bank.instance.addTransaction(Instant.now(), me, p, m, comment.getValue(), pl);
                 setValue(null);
                 tabBarView.setSelectedTab(transactionTable);
             }
@@ -193,8 +194,8 @@ public class ChequebookUI extends UI {
         {
             setSizeFull();
             setContainerDataSource(ds);
-            setVisibleColumns("created", "peerName", "amount", "comment");
-            setColumnHeaders("Created", "Peer", "Amount", "Comment");
+            setVisibleColumns("created", "placeName", "peerName", "amount", "comment");
+            setColumnHeaders("Created", "Place", "Peer", "Amount", "Comment");
             setSortContainerPropertyId("created");
             setSortAscending(false);
             addGeneratedColumn("created", (source, itemId, columnId) -> DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
